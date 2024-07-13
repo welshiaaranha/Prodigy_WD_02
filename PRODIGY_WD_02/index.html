@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StopWatch</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .display_none {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="watch">
+            <div class="outer_circle">
+                <div class="inner_circle">
+                    <span class="text minute"></span>
+                    <span class="text sec">00 :</span>
+                    <span class="text msec">00</span>
+                </div>
+            </div>
+            <div class="button-wrapper">
+                <button class="button reset display_none">Reset</button>
+                <button class="button play">Play</button>
+                <button class="button lap display_none">Laps</button>
+            </div>
+        </div>
+        <ul class="laps"></ul>
+        <button class="lap_clear_button display_none">Clear All</button>
+    </div>
+
+    <script>
+        const playButton = document.getElementsByClassName("play")[0];
+const lapButton = document.getElementsByClassName("lap")[0];
+const resetButton = document.getElementsByClassName("reset")[0];
+const clearButton= document.getElementsByClassName("lap_clear_button")[0];
+const second = document.getElementsByClassName("sec")[0];
+const centiSecond = document.getElementsByClassName("msec")[0];
+const lapsContainer = document.getElementsByClassName("laps")[0];
+const lapClearButton = document.getElementsByClassName("lap_clear_button")[0];
+const bg=document.getElementsByClassName("outer_circle")[0];
+
+
+let isPlay = false;
+let secCounter = 0;
+let centiCounter = 0;
+let sec;
+let centiSec;
+
+const formatTime = (value) => {
+    return value.toString().padStart(2, '0');
+};
+
+const toggleButton = () => {
+    lapButton.classList.remove("display_none");
+    resetButton.classList.remove("display_none");
+    lapClearButton.classList.remove("display_none"); // Ensure the Clear All button appears too
+};
+
+const play = () => {
+    if (!isPlay) {
+        playButton.innerHTML = 'Pause';
+        bg.classList.add("animation-bg");
+        sec = setInterval(() => {
+            second.innerText = `${formatTime(Math.floor(secCounter / 60))} : ${formatTime(secCounter % 60)} : `;
+            secCounter++;
+        }, 1000);
+        centiSec = setInterval(() => {
+            centiSecond.innerText = `${formatTime(centiCounter % 100)}`;
+            centiCounter++;
+        }, 10);
+        isPlay = true;
+    } else {
+        playButton.innerHTML = 'Play';
+        clearInterval(sec);
+        clearInterval(centiSec);
+        isPlay = false;
+        bg.classList.remove("animation-bg");
+    }
+    toggleButton();
+};
+
+const reset = () => {
+    play();
+    lapButton.classList.add("display_none");
+    resetButton.classList.add("display_none");
+    lapClearButton.classList.add("display_none"); // Hide the Clear All button
+    secCounter = 0;
+    centiCounter = 0;
+    second.innerHTML = '00 :';
+    centiSecond.innerHTML = '00';
+    lapsContainer.innerHTML = '';
+};
+
+const lap = () => {
+    const lapItem = document.createElement('li');
+    lapItem.className = 'lap_item';
+    const lapTime = `${formatTime(Math.floor((secCounter - 1) / 60))} : ${formatTime((secCounter - 1) % 60)} : ${formatTime(centiCounter % 100)}`;
+    lapItem.innerHTML = `<span class="number">#${lapsContainer.children.length + 1}</span>
+                         <span class="time_stamp">${lapTime}</span>`;
+    lapsContainer.appendChild(lapItem);
+};
+
+const clearLaps = () => {
+    lapsContainer.innerHTML = '';
+};
+
+const clearAll = () =>{
+    laps.innerHTML = 'lapButton';
+}
+
+playButton.addEventListener("click", play);
+resetButton.addEventListener("click", reset);
+lapButton.addEventListener("click", lap);
+lapClearButton.addEventListener("click", clearLaps);
+clearButton.addEventListener("click",clearAll);
+
+    </script>
+</body>
+</html>
